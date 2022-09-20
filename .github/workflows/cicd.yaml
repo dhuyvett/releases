@@ -9,6 +9,6 @@ jobs:
     steps:
       - uses: ncipollo/release-action@v1
         with:
-          tag: ${{ github.event.head_commit.id }}
+          tag: "0.0.1"
           generateReleaseNotes: "true"
           
