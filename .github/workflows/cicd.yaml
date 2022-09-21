@@ -1,7 +1,6 @@
 on:
   push:
-    branches:
-      - prod
+    branches: []
       
 jobs:
   Create-Release:

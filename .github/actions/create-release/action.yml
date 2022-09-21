@@ -4,6 +4,11 @@ inputs:
   base-version:
     description: "Major.minor version to use"
     required: true
+  target-commitish: 
+    description: commit id or tag object name for the release
+    required: false
+    default: ""
+
 outputs:
   version:
     description: "Major.minor.patch[-pr-number-commits]"
@@ -16,6 +21,9 @@ runs:
       run: |
         OWNER=${{ github.repository_owner	}}
         REPOSITORY=$(echo "${{ github.repository }}" | cut -f 2 -d '/')
-        TARGET=$(jq -r 'if .pull_request != null then .pull_request.head.sha else .after end' "$GITHUB_EVENT_PATH")
+        TARGET=${{ inputs.target-commitish }}
+        if [ -z "$TARGET" ]; then
+          TARGET=$(jq -r 'if .pull_request != null then .pull_request.head.sha else .after end' "$GITHUB_EVENT_PATH")
+        fi
         VERSION=$(${{ github.action_path }}/create-release.sh "$OWNER" "$REPOSITORY" "${{ inputs.base-version }}" "$TARGET")
         echo ::set-output name=version::$VERSION
