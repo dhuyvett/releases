@@ -7,6 +7,7 @@ jobs:
   Create-Release:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v3
       - uses: ./.github/actions/create-release@main
         with:
           base-version: 1.0"
