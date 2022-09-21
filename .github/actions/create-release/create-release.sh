@@ -2,16 +2,15 @@
 
 set -eu
 
-if [ $# -lt 6 ] || [ $# -gt 7 ]; then
-    echo "5 parameters required: OWNER_NAME REPOSITORY_NAME BASE_VERSION DRAFT TARGET"
+if [ $# -ne 4 ]; then
+    echo "4 parameters required: OWNER_NAME REPOSITORY_NAME BASE_VERSION TARGET"
     exit 1
 fi
 
 OWNER_NAME="$1"
 REPOSITORY_NAME="$2"
 BASE_VERSION="$3"
-DRAFT="$4"
-TARGET="$5"
+TARGET="$4"
 
 new_patch=1
 new_build=1
@@ -88,7 +87,7 @@ create_release() {
     curl --silent -o /dev/null --location --request POST "$GITHUB_API_URL/repos/$OWNER_NAME/$REPOSITORY_NAME/releases" \
         --header "Authorization: Bearer $GITHUB_TOKEN" \
         --header "Content-Type: application/json" \
-        --data-raw "{\"name\":\"Release $version\",\"tag_name\":\"$version\",\"draft\":$DRAFT,\"target_commitish\":\"$TARGET\",\"generate_release_notes\":true}"
+        --data-raw "{\"name\":\"Release $version\",\"tag_name\":\"$version\",\"target_commitish\":\"$TARGET\",\"generate_release_notes\":true}"
 }
 
 process_all_releases
