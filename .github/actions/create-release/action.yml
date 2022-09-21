@@ -1,0 +1,26 @@
+name: "Create release"
+description: "Create new release tag"
+inputs:
+  base-version:
+    description: "Major.minor version to use"
+    required: true
+  draft:
+    description: "Create this as an unpublished version"
+    required: false
+    default: "true" 
+outputs:
+  version:
+    description: "Major.minor.patch[-pr-number-commits]"
+    value: ${{ steps.build-release.outputs.version }}
+runs:
+  using: "composite"
+  steps:
+    - id: build-release
+      shell: sh
+      run: |
+        OWNER=${{ github.repository_owner	}}
+        REPOSITORY=$(echo "${{ github.repository }}" | cut -f 2 -d '/')
+        TARGET=$(jq -r 'if .pull_request != null then .pull_request.head.sha else .after end' "$GITHUB_EVENT_PATH")
+        PULL_NUMBER=$(jq -r '.pull_request.number  // empty' "$GITHUB_EVENT_PATH")
+        VERSION=$(${{ github.action_path }}/create-release.sh "$OWNER" "$REPOSITORY" "${{ inputs.base-version }}" "${{ inputs.draft }}" "$TARGET" "$PULL_NUMBER")
+        echo ::set-output name=version::$VERSION
