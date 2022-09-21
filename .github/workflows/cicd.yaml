@@ -7,7 +7,7 @@ jobs:
   Create-Release:
     runs-on: ubuntu-latest
     steps:
-      - uses: .github/actions/create-release@main
+      - uses: ./.github/actions/create-release@main
         with:
           base-version: 1.0"
         env:
