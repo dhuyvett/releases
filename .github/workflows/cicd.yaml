@@ -2,7 +2,7 @@ on:
   push:
     branches:
       - none
-      
+
 jobs:
   Create-Release:
     runs-on: ubuntu-latest
@@ -12,4 +12,4 @@ jobs:
         with:
           base-version: "1.0"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

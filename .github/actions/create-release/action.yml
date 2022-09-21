@@ -4,7 +4,7 @@ inputs:
   base-version:
     description: "Major.minor version to use"
     required: true
-  target-commitish: 
+  target-commitish:
     description: commit id or tag object name for the release
     required: false
     default: ""
