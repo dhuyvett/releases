@@ -1,9 +1,10 @@
-name: Production Release https://github.com/dhuyvett/releases/compare/prod...main
+name: Production Release
 on:
   workflow_dispatch:
 
 jobs:
   release-to-production:
+    name: https://github.com/dhuyvett/releases/compare/prod...main
     runs-on: ubuntu-latest
     environment: 
       name: prod
