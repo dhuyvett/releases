@@ -5,6 +5,7 @@ on:
 jobs:
   release-to-production:
     runs-on: ubuntu-latest
+    environment: prod
     steps:
       #####################
       - name: checkout prod
