@@ -1,4 +1,4 @@
-name: Production Release
+name: Production Release https://github.com/dhuyvett/releases/compare/prod...main
 on:
   workflow_dispatch:
 
@@ -7,7 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: 
       name: prod
-      url: https://github.com/dhuyvett/releases/compare/prod...main
       
     steps:
       #####################
