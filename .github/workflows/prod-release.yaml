@@ -5,7 +5,10 @@ on:
 jobs:
   release-to-production:
     runs-on: ubuntu-latest
-    environment: prod
+    environment: 
+      name: prod
+      url: https://github.com/dhuyvett/releases/compare/prod...main
+      
     steps:
       #####################
       - name: checkout prod
