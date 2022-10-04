@@ -32,7 +32,7 @@ jobs:
         ###############################
         uses: ./.github/actions/create-release
         with:
-          base-version: "1.0"
+          base-version: "v1.0"
           target-commitish: ${{ steps.update-prod.outputs.TARGET_COMMIT }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
