@@ -8,9 +8,16 @@ jobs:
     environment:
       name: stage
       
+    steps:
+      #####################
+      - name: checkout main
+        ###################
+        uses: actions/checkout@v3
+        with:
+          ref: main
+      
   release-to-production:
     needs: deploy-to-stage
-    name: https://github.com/dhuyvett/releases/compare/prod...main
     runs-on: ubuntu-latest
     environment: 
       name: prod
