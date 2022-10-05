@@ -3,7 +3,13 @@ on:
   workflow_dispatch:
 
 jobs:
+  deploy-to-stage:
+    runs-on: ubuntu-latest
+    environment:
+      name: stage
+      
   release-to-production:
+    needs: deploy-to-stage
     name: https://github.com/dhuyvett/releases/compare/prod...main
     runs-on: ubuntu-latest
     environment: 
