@@ -17,7 +17,7 @@ jobs:
           ref: main
       
   release-to-production:
-    needs: deploy-to-stage
+    needs: approve-release
     runs-on: ubuntu-latest
     environment: 
       name: prod
