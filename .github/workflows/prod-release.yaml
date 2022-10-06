@@ -6,23 +6,20 @@ jobs:
   # This job does nothing other than run in the environment (which brings the protection rules into play)
   # and marks the main branch as deployed in prod
   approve-release:
-    
     runs-on: ubuntu-latest
     environment:
       name: prod
-      
+
     steps:
-      # syntax requires _something_ here
-      uses: actions/hello-world-javascript-action@ad41a6c27317e688719c813b0d6a25685a9bce54
-      with:
-        who-to-greet: 'Mona the Octocat'
+      - run: |
+          echo "Prod deployment approved"
 
   # This job is not run in an environment, but the git push will fail if the main branch is not
-  # marked as deployed in prod due to branch protection rules on the prod branch    
+  # marked as deployed in prod due to branch protection rules on the prod branch
   perform-release:
     needs: approve-release
     runs-on: ubuntu-latest
-      
+
     steps:
       #####################
       - name: checkout prod
