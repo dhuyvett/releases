@@ -21,7 +21,7 @@ jobs:
           echo "this is a test issue"
 
           IN_TEST=$(curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues?labels=In%20Test")
-          if [ "$(echo $IN_TEST | jq '. | length')" != "0"]; then
+          if [ "$(echo $IN_TEST | jq '. | length')" != "0" ]; then
             echo "test is busy right now"
             exit 0
           fi
