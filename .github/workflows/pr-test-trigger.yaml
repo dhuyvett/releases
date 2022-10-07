@@ -1,10 +1,9 @@
 name: PR Test Trigger
 on:
   issues:
-    types: [ opened ]
+    types: [opened]
 
 jobs:
-  
   filter-issues:
     runs-on: ubuntu-latest
     outputs:
@@ -32,7 +31,7 @@ jobs:
   put-issue-in-test:
     runs-on: ubuntu-latest
     needs: filter-issues
-    if:  needs.filter-issues.outputs.issue-number
+    if: needs.filter-issues.outputs.issue-number
     steps:
-      run: |
-        echo "Issue number: ${{ needs.filter-issues.outputs.issue-number }}"
+      - run: |
+          echo "Issue number: ${{ needs.filter-issues.outputs.issue-number }}"
