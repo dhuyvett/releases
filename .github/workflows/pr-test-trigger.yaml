@@ -1,0 +1,20 @@
+name: PR Test Trigger
+on:
+  issues:
+    types: [ opened ]
+
+jobs:
+  
+  filter-issues:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: |
+          LABEL=$(cat $GITHUB_EVENT |jq '.labels[] | select(.name == "Test").name')
+          if [ "$LABEL" = "Test" ]; then
+            echo "this is a test issue"
+          else
+            echo "this is not a test issue"
+          fi
+
+  
