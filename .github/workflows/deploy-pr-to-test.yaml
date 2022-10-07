@@ -12,4 +12,5 @@ jobs:
     steps:
       - run: |
           echo "Issue number: ${{ inputs.issue-number }}"
-          curl -v -X POST "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/${{ inputs.issue-number }}/labels" -d '{"labels":["In Test"]}' -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" 
+          curl -v -X POST "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/${{ inputs.issue-number }}/labels" -d '{"labels":["In Test"]}' -H "Authorization: Bearer ${{secrets.GITHUB_TOKEN}}" > foo.txt 2>&1
+          cat foo.txt
