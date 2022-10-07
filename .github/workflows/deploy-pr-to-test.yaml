@@ -1,0 +1,15 @@
+name: Deploy PR to Test
+on:
+  workflow_call:
+    inputs:
+      issue-number:
+        required: true
+        type: string
+
+jobs:
+  put-pr-in-test:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "Issue number: ${{ inputs.issue-number }}"
+          curl -x POST "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/${{ inputs.issue-number }}/labels/In%20Test"

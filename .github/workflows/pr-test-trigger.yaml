@@ -29,9 +29,8 @@ jobs:
           echo "::set-output name=issue::$(cat $GITHUB_EVENT_PATH |jq -r '.issue.number')"
 
   put-issue-in-test:
-    runs-on: ubuntu-latest
     needs: filter-issues
     if: needs.filter-issues.outputs.issue-number
-    steps:
-      - run: |
-          echo "Issue number: ${{ needs.filter-issues.outputs.issue-number }}"
+    uses: ./.github/workflows/deploy-pr-to-test.yaml
+    with:
+      issue-number: ${{ needs.filter-issues.outputs.issue-number }}"
