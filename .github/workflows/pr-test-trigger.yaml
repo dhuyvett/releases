@@ -12,7 +12,7 @@ jobs:
       - run: |
           LABEL=$(cat $GITHUB_EVENT_PATH |jq -r '.issue.labels[] | select(.name == "Testing").name')
           echo "Label: $LABEL"
-          if [ "$LABEL" -eq "Testing" ]; then
+          if [ "$LABEL" = "Testing" ]; then
             echo "this is a test issue"
           else
             echo "this is not a test issue"
