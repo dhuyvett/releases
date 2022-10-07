@@ -12,8 +12,4 @@ jobs:
     steps:
       - run: |
           echo "Issue number: ${{ inputs.issue-number }}"
-          set +x
-          curl -v -X POST "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/${{ inputs.issue-number }}/labels" -d '{"labels":["In Test"]}'  > foo.txt 2>&1
-          set -x
-          ls -l foo.txt
-          cat foo.txt
+          curl -v -X POST "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/${{ inputs.issue-number }}/labels" -d '{"labels":["In Test"]}'
