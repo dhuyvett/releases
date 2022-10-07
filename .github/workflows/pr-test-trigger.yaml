@@ -7,15 +7,32 @@ jobs:
   
   filter-issues:
     runs-on: ubuntu-latest
+    outputs:
+      issue-number: ${{ steps.filter.outputs.issue }}
 
     steps:
-      - run: |
+      - id: filter
+        run: |
           LABEL=$(cat $GITHUB_EVENT_PATH |jq -r '.issue.labels[] | select(.name == "Testing").name')
           echo "Label: $LABEL"
-          if [ "$LABEL" = "Testing" ]; then
-            echo "this is a test issue"
-          else
+          if [ "$LABEL" != "Testing" ]; then
             echo "this is not a test issue"
+            exit 0
           fi
+          echo "this is a test issue"
 
-  
+          IN_TEST=$(curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues?labels=In%20Test")
+          if [ "$(echo $IN_TEST | jq '. | length')" != "0"]; then
+            echo "test is busy right now"
+            exit 0
+          fi
+          echo "test is available"
+          echo "::set-output name=issue::$(cat $GITHUB_EVENT_PATH |jq -r '.issue.number')"
+
+  put-issue-in-test:
+    runs-on: ubuntu-latest
+    needs: filter-issues
+    if:  needs.filter-issues.outputs.issue-number
+    steps:
+      run: |
+        echo "Issue number: ${{ needs.filter-issues.outputs.issue-number }}"
