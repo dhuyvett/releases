@@ -1,5 +1,10 @@
 name: Deploy PR to Test
 on:
+  workflow_dispatch:
+    inputs:
+      issue-number:
+        required: true
+        type: string
   workflow_call:
     inputs:
       issue-number:
@@ -12,4 +17,4 @@ jobs:
     steps:
       - run: |
           echo "Issue number: ${{ inputs.issue-number }}"
-          curl -v -X POST "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/${{ inputs.issue-number }}/labels" -d '{"labels":["In Test"]}'
+          curl -v "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/${{ inputs.issue-number }}/labels" -d '{"labels":["In Test"]}' -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'
