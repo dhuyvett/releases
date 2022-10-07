@@ -10,9 +10,9 @@ jobs:
 
     steps:
       - run: |
-          echo "$GITHUB_EVENT"
-          cat "$GITHUB_EVENT"
-          LABEL=$(cat $GITHUB_EVENT |jq '.labels[] | select(.name == "Testing").name')
+          echo "$GITHUB_EVENT_PATH"
+          cat "$GITHUB_EVENT_PATH"
+          LABEL=$(cat $GITHUB_EVENT_PATH |jq '.labels[] | select(.name == "Testing").name')
           if [ "$LABEL" = "Testing" ]; then
             echo "this is a test issue"
           else
