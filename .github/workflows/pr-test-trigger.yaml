@@ -31,7 +31,7 @@ jobs:
   put-pr-in-test:
     runs-on: ubuntu-latest
     needs: filter-labels
-    if: needs.filter-issues.outputs.pr-number
+    if: needs.filter-labels.outputs.pr-number
     steps:
       - run: |
           echo "pr-number: ${{ inputs.pr-number }}"
