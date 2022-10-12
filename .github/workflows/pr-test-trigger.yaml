@@ -35,4 +35,4 @@ jobs:
     steps:
       - run: |
           echo "pr-number: ${{ inputs.pr-number }}"
-          curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/${{ inputs.pr-number }}/labels" -d '{"labels":["Deployed to Test"]}' -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'
+          curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/${{ needs.filter-labels.outputs.pr-number }}/labels" -d '{"labels":["Deployed to Test"]}' -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'
