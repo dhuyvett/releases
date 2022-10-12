@@ -25,9 +25,6 @@ jobs:
             exit 0
           fi
           echo "test is available"
-          echo "::set-output name=pull_request::$(cat $GITHUB_EVENT_PATH |jq -r '.pull_request.number')"
+          PR_NUMBER=$(cat $GITHUB_EVENT_PATH |jq -r '.pull_request.number')
 
-      - if: filter.outputs.pull_request
-        run: |
-          echo "pr-number: ${{ inputs.pr-number }}"
-          curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/${{ needs.filter-labels.outputs.pr-number }}/labels" -d '{"labels":["Deployed to Test"]}' -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'
+          curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels" -d '{"labels":["Deployed to Test"]}' -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'
