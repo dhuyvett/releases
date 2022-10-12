@@ -1,37 +1,37 @@
 name: PR Test Trigger
 on:
-  issues:
-    types: [opened]
+  pull_request:
+    types: [labeled]
 
 jobs:
-  filter-issues:
+  filter-labels:
     runs-on: ubuntu-latest
     outputs:
-      issue-number: ${{ steps.filter.outputs.issue }}
+      pr-number: ${{ steps.filter.outputs.pull_request }}
 
     steps:
       - id: filter
         run: |
-          LABEL=$(cat $GITHUB_EVENT_PATH |jq -r '.issue.labels[] | select(.name == "Testing").name')
+          LABEL=$(cat $GITHUB_EVENT_PATH |jq -r '.pull_request.labels[] | select(.name == "Ready for Test").name')
           echo "Label: $LABEL"
-          if [ "$LABEL" != "Testing" ]; then
-            echo "this is not a test issue"
+          if [ "$LABEL" != "Ready for Test" ]; then
+            echo "this PR is not labeled for testing"
             exit 0
           fi
-          echo "this is a test issue"
+          echo "this PR is ready for test"
 
-          IN_TEST=$(curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues?labels=In%20Test")
+          IN_TEST=$(curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pull_requests?labels=Deployed%20to%20Test")
           if [ "$(echo $IN_TEST | jq '. | length')" != "0" ]; then
             echo "test is busy right now"
             exit 0
           fi
           echo "test is available"
-          echo "::set-output name=issue::$(cat $GITHUB_EVENT_PATH |jq -r '.issue.number')"
+          echo "::set-output name=pull_request::$(cat $GITHUB_EVENT_PATH |jq -r '.pull_request.number')"
 
-  put-issue-in-test:
-    needs: filter-issues
-    if: needs.filter-issues.outputs.issue-number
-    uses: ./.github/workflows/deploy-pr-to-test.yaml
-    with:
-      issue-number: ${{ needs.filter-issues.outputs.issue-number }}"
-    secrets: inherit
+  put-pr-in-test:
+    needs: filter-labels
+    if: needs.filter-issues.outputs.pr-number
+    steps:
+      - run: |
+          echo "pr-number: ${{ inputs.pr-number }}"
+          curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/${{ inputs.pr-number }}/labels" -d '{"labels":["Deployed to Test"]}' -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'
