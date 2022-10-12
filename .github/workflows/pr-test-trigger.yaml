@@ -20,7 +20,7 @@ jobs:
           fi
           echo "this PR is ready for test"
 
-          IN_TEST=$(curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pull_requests?labels=Deployed%20to%20Test")
+          IN_TEST=$(curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues?labels=Deployed%20to%20Test")
           if [ "$(echo $IN_TEST | jq '. | length')" != "0" ]; then
             echo "test is busy right now"
             exit 0
