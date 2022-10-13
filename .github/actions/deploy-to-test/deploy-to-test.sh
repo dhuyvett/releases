@@ -17,6 +17,14 @@ echo "SHA: $SHA"
 git fetch --all
 git checkout -b test origin/test
 git reset --hard "$SHA"
+
+curl \
+  -X POST \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: Bearer $GITHUB_TOKEN" \
+  "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/deployments" \
+  -d "{\"ref\":\"$SHA\",\"envirnment\":\"test\",\"description\":\"Deploy request from action\"}"
+
 git push --force origin test
 
 curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer $GITHUB_TOKEN" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER/labels" -d '{"labels":["Deployed to Test"]}'
