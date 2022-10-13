@@ -25,6 +25,15 @@ jobs:
             exit 0
           fi
           echo "test is available"
-          PR_NUMBER=$(cat $GITHUB_EVENT_PATH |jq -r '.pull_request.number')
+          ISSUE_NUMBER=$(jq -r '.pull_request.number' $GITHUB_EVENT_PATH)
 
-          curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels" -d '{"labels":["Deployed to Test"]}' -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'
+          echo "issue-number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+
+        #############
+      - name: deploy
+        ############
+        uses: ./.github/actions/deploy-to-test
+        with:
+          issue-number: ${{ steps.filter.outputs.issue-number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

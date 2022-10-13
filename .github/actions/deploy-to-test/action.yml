@@ -1,0 +1,20 @@
+name: Deploy to Test
+description: Deploy a PR to the Test environment
+inputs:
+  issue-number:
+    description: Issue number of the PR to deploy
+    required: true
+
+outputs:
+  success:
+    description: set to true if deployment succeeded
+    value: ${{ steps.perform-deployment.outputs.success }}
+runs:
+  using: "composite"
+  steps:
+    - id: perform-deployment
+      shell: sh
+      run: |
+
+        ${{ github.action_path }}/deploy_to_test.sh "${{ inputs.issue-number }}"
+        echo "success=true" >> $GITHUB_OUTPUT
