@@ -30,7 +30,7 @@ DEPLOYMENT=$(curl \
   -H "Accept: application/vnd.github+json" \
   -H "Authorization: Bearer $GITHUB_TOKEN" \
   "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/deployments" \
-  -d "{\"ref\":\"$SHA\",\"environment\":\"test\",\"description\":\"Deploy request from action\"}")
+  -d "{\"ref\":\"$SHA\",\"environment\":\"test\",\"auto_merge\":false}")
 
 DEPLOYMENT_ID=$(echo "$DEPLOYMENT" | jq -r ".id")
 
