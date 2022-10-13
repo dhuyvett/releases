@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -eu
+set -eux
 
 if [ $# -ne 1 ]; then
   echo "1 parameters required: ISSUE_NUMBER"
@@ -19,7 +19,8 @@ SHA=$(echo "$PR" | jq -r ".merge_commit_sha")
 echo "SHA: $SHA"
 
 # Switch to test branch and reset it to the merge commit SHA
-git fetch --unshallow
+git fetch origin test
+git fetch origin $SHA
 git checkout -b test origin/test
 git reset --hard "$SHA"
 
