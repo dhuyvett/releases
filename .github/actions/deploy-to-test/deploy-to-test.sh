@@ -19,7 +19,7 @@ SHA=$(echo "$PR" | jq -r ".merge_commit_sha")
 echo "SHA: $SHA"
 
 # Switch to test branch and reset it to the merge commit SHA
-git fetch --all
+git fetch --unshallow
 git checkout -b test origin/test
 git reset --hard "$SHA"
 
