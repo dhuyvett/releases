@@ -11,7 +11,6 @@ jobs:
       - uses: actions/checkout@v3
       - id: filter
         run: |
-          cat $GITHUB_EVENT_PATH
           LABEL=$(jq -r '.pull_request.labels[] | select(.name == "Ready for Test").name' $GITHUB_EVENT_PATH)
           echo "Label: $LABEL"
           if [ "$LABEL" != "Ready for Test" ]; then
