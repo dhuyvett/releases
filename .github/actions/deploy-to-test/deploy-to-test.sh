@@ -13,7 +13,7 @@ ISSUE_NUMBER="$1"
 PR=$(curl \
   -H "Accept: application/vnd.github+json" \
   -H "Authorization: Bearer $GITHUB_TOKEN" \
-  -H "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/$ISSUE_NUMBER")
+  "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/pulls/$ISSUE_NUMBER")
 
 SHA=$(echo "$PR" | jq -r ".merge_commit_sha")
 echo "SHA: $SHA"
