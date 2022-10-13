@@ -16,5 +16,5 @@ runs:
       shell: sh
       run: |
 
-        ${{ github.action_path }}/deploy_to_test.sh "${{ inputs.issue-number }}"
+        ${{ github.action_path }}/deploy-to-test.sh "${{ inputs.issue-number }}"
         echo "success=true" >> $GITHUB_OUTPUT
