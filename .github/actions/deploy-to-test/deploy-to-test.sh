@@ -18,12 +18,21 @@ git fetch --all
 git checkout -b test origin/test
 git reset --hard "$SHA"
 
-curl \
+DEPLOYMENT=$(curl \
   -X POST \
   -H "Accept: application/vnd.github+json" \
   -H "Authorization: Bearer $GITHUB_TOKEN" \
   "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/deployments" \
-  -d "{\"ref\":\"$SHA\",\"environment\":\"test\",\"description\":\"Deploy request from action\"}"
+  -d "{\"ref\":\"$SHA\",\"environment\":\"test\",\"description\":\"Deploy request from action\"}")
+
+DEPLOYMENT_ID=$(echo "$DEPLOYMENT" | jq -r ".id")
+
+curl \
+  -X POST \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: Bearer $GITHUB_TOKEN" \
+  "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/deployments/$DEPLOYMENT_ID/statuses" \
+  -d '{"environment":"test","state":"success"}'
 
 git push --force origin test
 
