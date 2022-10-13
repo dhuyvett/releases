@@ -1,15 +1,24 @@
-name: PR Test Trigger
+name: PR Labelled
 on:
   pull_request:
     types: [labeled]
+
+concurrency: test_deployment
 
 jobs:
   filter-labels:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - id: filter
+      #################
+      - name: check out
+        ###############
+        uses: actions/checkout@v3
+
+      ##############
+      - name: filter
+        ############
+        id: filter
         run: |
           LABEL=$(jq -r '.pull_request.labels[] | select(.name == "Ready for Test").name' $GITHUB_EVENT_PATH)
           echo "Label: $LABEL"
@@ -19,7 +28,7 @@ jobs:
           fi
           echo "this PR is ready for test"
 
-          IN_TEST=$(curl "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues?labels=Deployed%20to%20Test" -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}')
+          IN_TEST=$(curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues?labels=Deployed%20to%20Test")
           if [ "$(echo $IN_TEST | jq '. | length')" != "0" ]; then
             echo "test is busy right now"
             exit 0
@@ -32,6 +41,7 @@ jobs:
         #############
       - name: deploy
         ############
+        if: steps.filter.outputs.issue-number
         uses: ./.github/actions/deploy-to-test
         with:
           issue-number: ${{ steps.filter.outputs.issue-number }}

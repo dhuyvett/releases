@@ -1,0 +1,58 @@
+name: PR Unlabelled or closed
+on:
+  pull_request:
+    types: [unlabeled, closed]
+
+concurrency: test_deployment
+
+jobs:
+  filter-labels:
+    runs-on: ubuntu-latest
+
+    steps:
+      #################
+      - name: check out
+        ###############
+        uses: actions/checkout@v3
+
+      ##############
+      - name: filter
+        ############
+        id: filter
+        run: |
+          ACTION=$(jq -r ".action" $GITHUB_EVENT_PATH)
+          ISSUE_NUMBER=$(jq -r '.pull_request.number' $GITHUB_EVENT_PATH)
+
+          if [ "$ACTION" = "closed" ]; then
+            curl -X DELETE -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER/labels/Deployed%20to%20Test"
+            curl -X DELETE -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER/labels/Ready%20for%20Test"
+          else
+            if [ "$(jq -r '.pull_request.labels[] | select(.name == "Ready for Test").length' $GITHUB_EVENT_PATH)" = "" ]; then
+              curl -X DELETE -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues/$ISSUE_NUMBER/labels/Deployed%20to%20Test"
+            fi
+          fi
+
+          IN_TEST=$(curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues?labels=Deployed%20to%20Test")
+          if [ "$(echo $IN_TEST | jq '. | length')" != "0" ]; then
+            echo "test is busy right now"
+            exit 0
+          fi
+
+          PRS_READY_FOR_TEST=$(curl -H "Accept: application/vnd.github+json" -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" "$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/issues?labels=Ready%20for%20Test")
+          if [ "$(echo $PRS_READY_FOR_TEST | jq '. | length')" = "0" ]; then
+            echo "there are no PRs ready for test"
+            exit 0
+          fi
+
+          ISSUE_NUMBER=$(echo $PRS_READY_FOR_TEST | jq -r '.[0].number')
+          echo "issue-number=$ISSUE_NUMBER" >> $GITHUB_OUTPUT
+
+        #############
+      - name: deploy
+        ############
+        if: steps.filter.outputs.issue-number
+        uses: ./.github/actions/deploy-to-test
+        with:
+          issue-number: ${{ steps.filter.outputs.issue-number }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
